@@ -1,1 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System - Patient Details</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #ced4da;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #6c757d;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+            color: #495057;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 350px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Hospital Management System</h1>
+            <p>Patient Details & Registration Portal</p>
+        </header>
+
+        <!-- Patient Registration Form -->
+        <div class="card">
+            <h2>Register New Patient</h2>
+            <form id="patientForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Date of Birth *</label>
+                        <input type="date" id="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender *</label>
+                        <select id="gender" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="bloodGroup">Blood Group</label>
+                        <select id="bloodGroup">
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="emergencyName">Emergency Contact Name</label>
+                        <input type="text" id="emergencyName">
+                    </div>
+                    <div class="form-group">
+                        <label for="emergencyPhone">Emergency Contact Phone</label>
+                        <input type="tel" id="emergencyPhone">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="address">Residential Address *</label>
+                        <textarea id="address" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="allergies">Known Allergies</label>
+                        <textarea id="allergies"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="medicalHistory">Past Medical History</label>
+                        <textarea id="medicalHistory"></textarea>
+                    </div>
+                </div>
+                <button type="submit">Save Patient Record</button>
+            </form>
+        </div>
+
+        <!-- Patient Directory / List -->
+        <div class="card">
+            <h2>Patient Directory</h2>
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search by Name, MRN, or Phone...">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MRN</th>
+                            <th>Full Name</th>
+                            <th>Gender</th>
+                            <th>Phone</th>
+                            <th>Blood Group</th>
+                            <th>Registered Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientTableBody">
+                        <!-- Dynamic rows injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize local database storage simulation
+        let patients = JSON.parse(localStorage.getItem('hospital_patients')) || [
+            {
+                id: 1,
+                mrn: 'MRN-104928',
+                firstName: 'John',
+                lastName: 'Doe',
+                dob: '1985-06-15',
+                gender: 'Male',
+                phone: '555-0192',
+                email: 'john.doe@example.com',
+                bloodGroup: 'O+',
+                address: '123 Health Ave, Medical District',
+                allergies: 'Penicillin',
+                medicalHistory: 'Hypertension',
+                registeredAt: '2026-06-01'
+            }
+        ];
+
+        const patientForm = document.getElementById('patientForm');
+        const patientTableBody = document.getElementById('patientTableBody');
+        const searchBar = document.getElementById('searchBar');
+
+        // Function to render the patient table
+        function renderPatients(dataToRender) {
+            patientTableBody.innerHTML = '';
+            
+            if (dataToRender.length === 0) {
+                patientTableBody.innerHTML = `<tr><td colspan="6" class="empty-state">No patient records found.</td></tr>`;
+                return;
+            }
+
+            dataToRender.forEach(patient => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${patient.mrn}</strong></td>
+                    <td>${patient.firstName} ${patient.lastName}</td>
+                    <td>${patient.gender}</td>
+                    <td>${patient.phone}</td>
+                    <td>${patient.bloodGroup || 'N/A'}</td>
+                    <td>${patient.registeredAt}</td>
+                `;
+                patientTableBody.appendChild(row);
+            });
+        }
+
+        // Handle Form Submission
+        patientForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const newPatient = {
+                id: Date.now(),
+                mrn: 'MRN-' + Math.floor(100000 + Math.random() * 900000),
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                dob: document.getElementById('dob').value,
+                gender: document.getElementById('gender').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                bloodGroup: document.getElementById('bloodGroup').value,
+                emergencyName: document.getElementById('emergencyName').value,
+                emergencyPhone: document.getElementById('emergencyPhone').value,
+                address: document.getElementById('address').value,
+                allergies: document.getElementById('allergies').value,
+                medicalHistory: document.getElementById('medicalHistory').value,
+                registeredAt: new Date().toISOString().split('T')[0]
+            };
+
+            patients.unshift(newPatient);
+            localStorage.setItem('hospital_patients', JSON.stringify(patients));
+
+            alert(`Patient successfully registered! Generated MRN: ${newPatient.mrn}`);
+            patientForm.reset();
+            renderPatients(patients);
+        });
+
+        // Search Filter
+        searchBar.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const filtered = patients.filter(p => 
+                p.firstName.toLowerCase().includes(query) ||
+                p.lastName.toLowerCase().includes(query) ||
+                p.mrn.toLowerCase().includes(query) ||
+                p.phone.toLowerCase().includes(query)
+            );
+            renderPatients(filtered);
+        });
+
+        // Initial render on page load
+        renderPatients(patients);
+    </script>
+</body>
+</html>
