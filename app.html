@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradient Todo App</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .todo-container {
+      width: 100%;
+      max-width: 450px;
+      padding: 30px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 20px 50px rgba(30, 20, 80, 0.25);
+    }
+
+    h1 {
+      color: #35265e;
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #777;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid #e0d9f5;
+      border-radius: 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    input:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px #8b5cf620;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .add-btn {
+      padding: 0 18px;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    button:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filter-btn {
+      padding: 8px 13px;
+      border-radius: 20px;
+      background: #f0edfa;
+      color: #66568d;
+    }
+
+    .filter-btn.active {
+      color: white;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    #task-list {
+      list-style: none;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 1px solid #eee8fa;
+      border-radius: 13px;
+      background: white;
+      animation: appear 0.25s ease;
+    }
+
+    .task input[type="checkbox"] {
+      flex: 0 0 17px;
+      width: 17px;
+      height: 17px;
+      accent-color: #7952d6;
+      cursor: pointer;
+    }
+
+    .task-text {
+      flex: 1;
+      overflow-wrap: anywhere;
+      color: #35265e;
+    }
+
+    .task.completed .task-text {
+      text-decoration: line-through;
+      color: #aaa;
+    }
+
+    .delete-btn {
+      background: #fff0f1;
+      color: #e34b66;
+      padding: 7px 10px;
+      border-radius: 8px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #999;
+      padding: 20px 0;
+      font-size: 14px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #eee8fa;
+      color: #888;
+      font-size: 12px;
+    }
+
+    .clear-btn {
+      background: none;
+      color: #7652bd;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 400px) {
+      .todo-container {
+        padding: 22px 16px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .add-btn {
+        padding: 0 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="todo-container">
+    <h1>✨ My Todo List</h1>
+    <p class="subtitle">Small steps, big achievements.</p>
+
+    <form class="input-group" id="todo-form">
+      <input
+        type="text"
+        id="todo-input"
+        placeholder="What needs to be done?"
+        aria-label="New task"
+        maxlength="200"
+        required
+      >
+      <button class="add-btn" type="submit">+ Add</button>
+    </form>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="active">Active</button>
+      <button class="filter-btn" data-filter="completed">Done</button>
+    </div>
+
+    <ul id="task-list"></ul>
+
+    <div class="footer">
+      <span id="task-count">0 tasks left</span>
+      <button class="clear-btn" id="clear-completed">
+        Clear completed
+      </button>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById("todo-form");
+    const input = document.getElementById("todo-input");
+    const taskList = document.getElementById("task-list");
+    const taskCount = document.getElementById("task-count");
+    const clearBtn = document.getElementById("clear-completed");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    let tasks = [];
+    let currentFilter = "all";
+
+    // Restore tasks saved in this browser
+    try {
+      tasks = JSON.parse(localStorage.getItem("gradient-todos")) || [];
+      if (!Array.isArray(tasks)) tasks = [];
+      tasks = tasks.filter(task =>
+        task &&
+        typeof task.id === "string" &&
+        typeof task.text === "string" &&
+        typeof task.completed === "boolean"
+      );
+    } catch {
+      tasks = [];
+    }
+
+    function saveTasks() {
+      try {
+        localStorage.setItem("gradient-todos", JSON.stringify(tasks));
+      } catch {
+        // The app still works if browser storage is unavailable.
+      }
+    }
+
+    function renderTasks() {
+      taskList.replaceChildren();
+
+      const filteredTasks = tasks.filter(task => {
+        if (currentFilter === "active") return !task.completed;
+        if (currentFilter === "completed") return task.completed;
+        return true;
+      });
+
+      if (filteredTasks.length === 0) {
+        const empty = document.createElement("li");
+        empty.className = "empty";
+        empty.textContent = tasks.length === 0
+          ? "No tasks yet. Add your first task! 🌟"
+          : "No tasks in this filter.";
+        taskList.appendChild(empty);
+      }
+
+      filteredTasks.forEach(task => {
+        const li = document.createElement("li");
+        li.className = "task" + (task.completed ? " completed" : "");
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.completed;
+        checkbox.setAttribute("aria-label", "Mark task complete");
+
+        checkbox.addEventListener("change", () => {
+          task.completed = checkbox.checked;
+          saveTasks();
+          renderTasks();
+        });
+
+        const text = document.createElement("span");
+        text.className = "task-text";
+        text.textContent = task.text;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.textContent = "✕";
+        deleteBtn.setAttribute("aria-label", "Delete " + task.text);
+
+        deleteBtn.addEventListener("click", () => {
+          tasks = tasks.filter(item => item.id !== task.id);
+          saveTasks();
+          renderTasks();
+        });
+
+        li.append(checkbox, text, deleteBtn);
+        taskList.appendChild(li);
+      });
+
+      const remaining = tasks.filter(task => !task.completed).length;
+      taskCount.textContent = `${remaining} task${remaining === 1 ? "" : "s"} left`;
+
+      filterButtons.forEach(button => {
+        const active = button.dataset.filter === currentFilter;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const text = input.value.trim();
+      if (!text) return;
+
+      tasks.unshift({
+        id: crypto.randomUUID
+          ? crypto.randomUUID()
+          : Date.now().toString() + Math.random().toString(36).slice(2),
+        text,
+        completed: false
+      });
+
+      input.value = "";
+      currentFilter = "all";
+      saveTasks();
+      renderTasks();
+      input.focus();
+    });
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+        renderTasks();
+      });
+    });
+
+    clearBtn.addEventListener("click", () => {
+      tasks = tasks.filter(task => !task.completed);
+      saveTasks();
+      renderTasks();
+    });
+
+    renderTasks();
+  </script>
+</body>
+</html>
+
